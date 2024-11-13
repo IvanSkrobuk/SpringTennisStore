@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div th:replace="~{navigation :: navigation(activeTab)}"></div>
+    <h2>Order details</h2>
+    <table class="table table-hover">
+        <thead class="thead-light">
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Product cart
+                <br>id, title, price (руб.)
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${selectedOrder.id}"></td>
+            <td th:text="${selectedOrder.user.username}"></td>
+            <td>
+                <table>
+                    <tr th:each="item : ${selectedOrder.orderItems}">
+                        <td th:text="${item.product.id}"></td>
+                        <td th:text="${item.product.title}"></td>
+                        <td th:text="${item.product.price}"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div><a class="btn btn-danger"
+            th:href="@{'/orders/order-details/remove/' + ${selectedOrder.id}}">Отменить заказ</a>
+    </div>
+</div>
+</body>
+</html>

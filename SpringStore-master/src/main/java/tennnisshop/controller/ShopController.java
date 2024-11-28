@@ -32,9 +32,4 @@ public class ShopController {
         return "details";
     }
 
-    @GetMapping("/remove/{id}")
-    public String deleteByProductId(@PathVariable("id") Long id) {
-        productService.deleteProductById(id);
-        return "redirect:/shop";
-    }
 }

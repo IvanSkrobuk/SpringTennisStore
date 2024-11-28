@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Store Orders</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Дополнительные стили для панели */
+        body {
+            font-size: 0.875rem;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 56px; /* Высота стандартной панели навигации Bootstrap */
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 16px 0 0; /* Дополнительные отступы */
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+
+        .sidebar-sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 56px); /* Учитываем высоту верхней панели */
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+<header >
+    <div th:replace="~{navigation :: navigation(Shop)}"></div>
+</header>
+<div class="container-fluid">
+    <div class="row" sec:authorize="hasRole('ADMIN')">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin}">
+                            <span data-feather="home"></span>
+                            Статистика
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/admin-orders}">
+                            <span data-feather="file"></span>
+                            Заказы
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/admin-products}">
+                            <span data-feather="shopping-cart"></span>
+                            Товары
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/admin-users}">
+                            <span data-feather="users"></span>
+                            Пользователи
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="chart-container">
+                <h2>Заказы</h2>
+                <span th:if="${orders.size() == 0}">Нет активных заказов</span>
+                <table sec:authorize="isAuthenticated()" th:if="${orders.size() > 0}"
+                       class="table table-hover">
+                    <thead class="thead-light">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${#temporals.format(order.date, 'dd.MM.yyyy HH:mm')}"></td>
+                        <td th:text="${order.user.username}"></td>
+                        <td><a class="btn btn-danger" th:href="@{'/admin/remove-order/' + ${order.id}}">Отменить</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+
+</body>
+</html>

@@ -23,12 +23,6 @@ public class MainController {
         return "shop";
     }
 
-    @RequestMapping("/users")
-    public String showAllUsers(Model model, Pageable pageable) {
-        model.addAttribute("users", userRepository.findAll(pageable));
-        return "user";
-    }
-
     @GetMapping("/login")
     public String toLoginPage() {
         return "login";

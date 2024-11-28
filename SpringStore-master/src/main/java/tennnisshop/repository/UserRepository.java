@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import tennnisshop.entity.Authority;
+import tennnisshop.entity.OrderItem;
 import tennnisshop.entity.User;
 
 import java.sql.ResultSet;
@@ -71,14 +72,11 @@ public class UserRepository {
     }
 
     // Получить всех пользователей
-    public Page<User> findAll(Pageable pageable) {
-        String sql = "SELECT * FROM users LIMIT ? OFFSET ?";
-        List<User> users = jdbcTemplate.query(sql, new Object[]{pageable.getPageSize(), pageable.getOffset()}, this::mapRowToUser);
-        String countSql = "SELECT COUNT(*) FROM users";
-        int total = jdbcTemplate.queryForObject(countSql, Integer.class);
-        return new PageImpl<>(users, pageable, total);
-    }
 
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users";
+        return jdbcTemplate.query(sql, this::mapRowToUser);
+    }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();

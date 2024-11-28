@@ -26,17 +26,30 @@ public class OrderRepository {
     // Аналог метода JpaRepository: save
     public Order save(Order order) {
         if (order.getId() == null) {
-            // Сохранение нового заказа
-            String sql = "INSERT INTO orders (username) VALUES (?) RETURNING id";
-            Long id = jdbcTemplate.queryForObject(sql, new Object[]{order.getUser().getUsername()}, Long.class);
+            // Сохранение нового заказа с текущей датой
+            String sql = "INSERT INTO orders (username, date) VALUES (?, ?) RETURNING id";
+            Long id = jdbcTemplate.queryForObject(
+                    sql,
+                    new Object[]{
+                            order.getUser().getUsername(),
+                            java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()) // Установка текущей даты
+                    },
+                    Long.class
+            );
             order.setId(id);
         } else {
             // Обновление существующего заказа
-            String sql = "UPDATE orders SET username = ? WHERE id = ?";
-            jdbcTemplate.update(sql, order.getUser().getUsername(), order.getId());
+            String sql = "UPDATE orders SET username = ?, date = ? WHERE id = ?";
+            jdbcTemplate.update(
+                    sql,
+                    order.getUser().getUsername(),
+                    java.sql.Timestamp.valueOf(order.getDate()),
+                    order.getId()
+            );
         }
         return order;
     }
+
 
     // Аналог метода JpaRepository: getOne (загружает заказ по ID)
     public Order getOne(Long id) {
@@ -65,7 +78,7 @@ public class OrderRepository {
     private Order mapRowToOrder(ResultSet rs, int rowNum) throws SQLException {
         Order order = new Order();
         order.setId(rs.getLong("id"));
-
+        order.setDate(rs.getTimestamp("date").toLocalDateTime()); // Установка даты
         User user = new User();
         user.setUsername(rs.getString("username"));
         order.setUser(user);

@@ -2,44 +2,85 @@
 
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
-
 <head>
-    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spring Store</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-</head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Online store">
+    <meta name="author" content="Ivanus">
+    <title>Online Store</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .card-img-top {
+            object-fit: cover;
+            height: 225px;
+        }
+
+        .hero-section {
+            background-image: url('/images/im1.jpg'); /* Укажите путь к вашему изображению */
+            background-size: cover; /* Изображение будет покрывать всю секцию */
+            background-position: center; /* Центрируем изображение */
+            background-repeat: no-repeat; /* Отключаем повторение */
+            color: white; /* Устанавливаем белый цвет текста для контраста */
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* Тень для текста */
+        }
+
+    </style>
+</head>
 <body>
 
-<div class="container">
+<header >
     <div th:replace="~{navigation :: navigation(Shop)}"></div>
-    <h2>Магазин</h2>
-    <span th:if="${products.getSize() == 0}">Нет товаров в наличии</span>
-    <table th:if="${products.getSize() > 0}" class="table table-hover">
-        <thead class="thead-light">
-        <tr>
-            <th>Название</th>
-            <th>Цена, руб.</th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product : ${products}">
-            <td th:text="${product.id}"></td>
-            <td th:text="${product.title}"></td>
-            <td th:text="${product.price}"></td>
-            <td><a class="btn btn-secondary" th:href="@{'/details/' + ${product.id}}">Подробнее</a></td>
-            <td><a class="btn btn-success" th:href="@{'/cart/add/' + ${product.id}}">Добавить в корзину</a></td>
-            <td sec:authorize="hasRole('ADMIN')"><a class="btn btn-danger" th:href="@{'/remove/' + ${product.id}}">Удалить товар</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <p th:text="${'Page: ' + (products.getNumber() + 1)}"></p>
-</div>
+</header>
+
+<main>
+    <section class="py-5 text-center container hero-section">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1 class="fw-light">Добро пожаловать в TennisStore</h1>
+                <p class="lead">Изучите широкий ассортимент товаров ниже!</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <span th:if="${products.getSize() == 0}">Нет товаров в наличии</span>
+            <div th:if="${products.getSize() > 0}" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <!-- Dynamic rendering of products -->
+                <div class="col" th:each="product : ${products}">
+                    <div class="card shadow-sm">
+                        <img th:src="@{/images/} + ${product.imgURL}" class="card-img-top" alt="Product Image">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${product.title}">Product Name</h5>
+                            <p class="card-text" th:text="${product.title}">Product description goes here.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a th:href="@{'/details/' + ${product.id}}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                                    <a th:href="@{'/cart/add/' + ${product.id}}" class="btn btn-sm btn-outline-secondary">Добавить в корзину</a>
+                                </div>
+                                <small class="text-body-secondary" th:text="'BYN ' + ${product.price}">Price</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer class="text-body-secondary py-5">
+    <div class="container">
+        <p class="float-end mb-1">
+            <a href="#">Обратно наверх</a>
+        </p>
+        <p class="mb-1">TennisStore &copy; 2024</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

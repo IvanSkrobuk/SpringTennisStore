@@ -1,23 +1,31 @@
 package tennnisshop.entity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "orders")
+
 public class Order {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+
     private Long id;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    @ManyToOne
-    @JoinColumn(name = "username")
     private User user;
+
+    private LocalDateTime date;
+
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+
 
     public Order() {
     }

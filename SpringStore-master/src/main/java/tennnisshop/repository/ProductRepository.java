@@ -49,8 +49,12 @@ public class ProductRepository {
         String deleteOrderItemsSql = "DELETE FROM order_items WHERE product_id = ?";
         jdbcTemplate.update(deleteOrderItemsSql, id);
 
+        String deleteAnalyticsSql = "DELETE FROM analytics WHERE product_id = ?";
+        jdbcTemplate.update(deleteAnalyticsSql, id);
+
         String deleteProductSql = "DELETE FROM products WHERE id = ?";
         jdbcTemplate.update(deleteProductSql, id);
+
     }
 
 
@@ -58,14 +62,15 @@ public class ProductRepository {
     public void save(Product product) {
         if (product.getId() == null) {
             // Вставка нового продукта
-            String sql = "INSERT INTO products (title, price) VALUES (?, ?)";
-            jdbcTemplate.update(sql, product.getTitle(), product.getPrice());
+            String sql = "INSERT INTO products (title, price, img_url) VALUES (?, ?, ?)";
+            jdbcTemplate.update(sql, product.getTitle(), product.getPrice(), product.getImgURL());
         } else {
             // Обновление существующего продукта
-            String sql = "UPDATE products SET title = ?, description = ?, price = ? WHERE id = ?";
-            jdbcTemplate.update(sql, product.getTitle(), product.getPrice(), product.getId());
+            String sql = "UPDATE products SET title = ?, price = ?, img_url = ? WHERE id = ?";
+            jdbcTemplate.update(sql, product.getTitle(), product.getPrice(), product.getImgURL(), product.getId());
         }
     }
+
 
     // Получить все продукты с пагинацией
     public Page<Product> getAllProducts(Pageable pageable) {
@@ -87,6 +92,8 @@ public class ProductRepository {
         product.setId(rs.getLong("id"));
         product.setTitle(rs.getString("title"));
         product.setPrice(rs.getInt("price"));
+        product.setImgURL(rs.getString("img_url")); // Маппинг нового поля
         return product;
     }
+
 }

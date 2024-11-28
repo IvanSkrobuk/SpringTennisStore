@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Дополнительные стили для панели */
+    body {
+      font-size: 0.875rem;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 56px; /* Высота стандартной панели навигации Bootstrap */
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 16px 0 0; /* Дополнительные отступы */
+      box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    }
+
+    .sidebar-sticky {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 56px); /* Учитываем высоту верхней панели */
+      padding-top: .5rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .chart-container {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+
+</head>
+<body>
+<header >
+  <div th:replace="~{navigation :: navigation(Shop)}"></div>
+</header>
+<div class="container-fluid">
+  <div class="row" sec:authorize="hasRole('ADMIN')">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+      <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" th:href="@{/admin}">
+              <span data-feather="home"></span>
+              Статистика
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/admin-orders}">
+              <span data-feather="file"></span>
+              Заказы
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/admin-products}">
+              <span data-feather="shopping-cart"></span>
+              Товары
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/admin-users}">
+              <span data-feather="users"></span>
+              Пользователи
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/create}">
+              <span data-feather="users"></span>
+              Создать товар
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Продажи в день</h1>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="myChart" width="400" height="200"></canvas>
+      </div>
+      <div class="chart-container">
+        <h2>Статистика</h2>
+        <form method="get" action="/api/exportAnalytics">
+          <button type="submit" class="btn btn-outline-success">Выгрузить Excel</button>
+        </form>
+        <table  class="table table-hover">
+          <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>Продукт</th>
+            <th>Последняя продажа</th>
+            <th>Всего продаж</th>
+            <th>Выручка</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="anal : ${analytics}">
+            <td th:text="${anal.id}"></td>
+            <td th:text="${anal.productName}"></td>
+            <td th:text="${#temporals.format(anal.lastSold, 'dd.MM.yyyy HH:mm')}"></td>
+            <td th:text="${anal.totalSales}"></td>
+            <td th:text="${anal.totalRevenue}"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js Script -->
+<script>
+  (() => {
+    'use strict';
+    document.addEventListener('DOMContentLoaded', async () => {
+      const ctx = document.getElementById('myChart');
+
+      try {
+        // Получение данных из API
+        const response = await fetch('/api/sales-per-day');
+        const data = await response.json();
+
+        // Преобразование данных для графика
+        const labels = Object.keys(data); // Дни недели
+        const values = Object.values(data); // Количество продаж
+
+        // Создание графика
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: values,
+              lineTension: 0,
+              backgroundColor: 'transparent',
+              borderColor: '#007bff',
+              borderWidth: 4,
+              pointBackgroundColor: '#007bff'
+            }]
+          },
+          options: {
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                boxPadding: 3
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Ошибка загрузки данных для графика:', error);
+      }
+    });
+  })();
+</script>
+</body>
+</html>

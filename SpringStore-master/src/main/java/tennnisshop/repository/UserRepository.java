@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import tennnisshop.entity.Authority;
+import tennnisshop.entity.OrderItem;
 import tennnisshop.entity.User;
 
 import java.sql.ResultSet;
@@ -36,32 +37,19 @@ public class UserRepository {
     }
 
 
-    // Сохранить пользователя (вставка или обновление)
+    // Сохранить пользователя
     public void save(User user) {
-        if (user.getUsername() == null) {
-            // Вставка нового пользователя
+
             String sql = "INSERT INTO users (username, password, enabled) VALUES (?, ?, ?)";
             jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.isEnabled());
 
-            // Сохранение списка authorities
             for (Authority authority : user.getAuthorities()) {
                 String authoritySql = "INSERT INTO authorities (username, authority) VALUES (?, ?)";
                 jdbcTemplate.update(authoritySql, user.getUsername(), authority.getAuthority());
             }
-        } else {
-            // Обновление существующего пользователя
-            String sql = "UPDATE users SET password = ?, enabled = ? WHERE username = ?";
-            jdbcTemplate.update(sql, user.getPassword(), user.isEnabled(), user.getUsername());
 
-            String deleteAuthoritiesSql = "DELETE FROM authorities WHERE username = ?";
-            jdbcTemplate.update(deleteAuthoritiesSql, user.getUsername());
-
-            for (Authority authority : user.getAuthorities()) {
-                String authoritySql = "INSERT INTO authorities (username, authority) VALUES (?, ?)";
-                jdbcTemplate.update(authoritySql, user.getUsername(), authority.getAuthority());
-            }
-        }
     }
+
 
     // Удалить пользователя по имени пользователя
     public void deleteById(String username) {
@@ -71,14 +59,11 @@ public class UserRepository {
     }
 
     // Получить всех пользователей
-    public Page<User> findAll(Pageable pageable) {
-        String sql = "SELECT * FROM users LIMIT ? OFFSET ?";
-        List<User> users = jdbcTemplate.query(sql, new Object[]{pageable.getPageSize(), pageable.getOffset()}, this::mapRowToUser);
-        String countSql = "SELECT COUNT(*) FROM users";
-        int total = jdbcTemplate.queryForObject(countSql, Integer.class);
-        return new PageImpl<>(users, pageable, total);
-    }
 
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users";
+        return jdbcTemplate.query(sql, this::mapRowToUser);
+    }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();
@@ -97,6 +82,15 @@ public class UserRepository {
         user.setAuthorities(authorities);
 
         return user;
+    }
+
+    public void updateStatus(String username, boolean enabled) {
+        String sql = "UPDATE users SET enabled = ? WHERE username = ?";
+        int rowsUpdated = jdbcTemplate.update(sql, enabled, username);
+
+        if (rowsUpdated == 0) {
+            throw new IllegalArgumentException("User with username '" + username + "' not found.");
+        }
     }
 
 }

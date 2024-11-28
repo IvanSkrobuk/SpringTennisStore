@@ -63,7 +63,7 @@ public class OrderController {
 
     @GetMapping({"/remove/{id}", "/order-details/remove/{id}"})
     public String deleteOrderById(@PathVariable("id") Long id) {
-        orderService.deleteOrderById(id);
+        orderService.updateOrderStatus(id,"CANCELLED");
         return "redirect:/orders";
     }
 }

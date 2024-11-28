@@ -2,27 +2,38 @@ package tennnisshop.entity;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "products")
+
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "title")
     private String title;
 
-    @Column(name = "price")
     private int price;
+
+    private String imgURL;
+
+    private String category;
+
+    private int quantity;
 
     public Product() {}
 
-    public Product(Long id, String title, int price) {
+    public Product(Long id, String title, int price, String imgURL, String category, int quantity) {
         this.id = id;
         this.title = title;
         this.price = price;
+        this.imgURL = imgURL;
+        this.category = category;
+        this.quantity = quantity;
+    }
+
+    public String getImgURL() {
+        return imgURL;
+    }
+
+    public void setImgURL(String imgURL) {
+        this.imgURL = imgURL;
     }
 
     public Long getId() {
@@ -56,5 +67,21 @@ public class Product {
                 ", title='" + title + '\'' +
                 ", price=" + price +
                 ']';
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

@@ -105,6 +105,13 @@ CREATE TABLE shop.users (
     enabled boolean NOT NULL
 );
 
+CREATE TABLE shop.analytics (
+                           id SERIAL PRIMARY KEY,
+                           product_id INT REFERENCES shop.products(id) ON DELETE CASCADE,
+                           total_sales INT DEFAULT 0,
+                           total_revenue DECIMAL(10, 2) DEFAULT 0.00,
+                           last_sold TIMESTAMP
+);
 
 ALTER TABLE shop.users OWNER TO postgres;
 
@@ -217,14 +224,46 @@ DELETE FROM shop.order_items WHERE product_id IN (2, 4, 5, 3);
 
 DELETE FROM shop.products WHERE id IN (2, 4, 5, 3);
 
-INSERT INTO shop.products (id, title, price) VALUES
-                                                 (1, 'Теннисная ракетка', 250),
-                                                 (2, 'Упаковка теннисных мячей', 50),
-                                                 (3, 'Теннисная обувь', 300),
-                                                 (4, 'Теннисная сумка', 120),
-                                                 (5, 'Теннисные носки', 20),
-                                                 (6, 'Теннисные шорты', 70),
-                                                 (7, 'Теннисная футболка', 90),
-                                                 (8, 'Теннисная кепка', 30),
-                                                 (9, 'Теннисная лента для рукоятки', 15),
-                                                 (10, 'Теннисная сетка', 500);
+INSERT INTO shop.products (id, title, price, img_url) VALUES
+                                                          (1, 'Теннисная ракетка', 250, 'im1.jpg'),
+                                                          (2, 'Упаковка теннисных мячей', 50, 'im1.jpg'),
+                                                          (3, 'Теннисная обувь', 300, 'im1.jpg'),
+                                                          (4, 'Теннисная сумка', 120, 'im1.jpg'),
+                                                          (5, 'Теннисные носки', 20, 'im1.jpg'),
+                                                          (6, 'Теннисные шорты', 70, 'im1.jpg'),
+                                                          (7, 'Теннисная футболка', 90, 'im1.jpg'),
+                                                          (8, 'Теннисная кепка', 30, 'im1.jpg'),
+                                                          (9, 'Теннисная лента для рукоятки', 15, 'im1.jpg'),
+                                                          (10, 'Теннисная сетка', 500, 'im1.jpg');
+
+ALTER TABLE shop.products ADD COLUMN quantity int;
+
+CREATE TABLE shop.order_items (
+                             id BIGSERIAL PRIMARY KEY,         -- Уникальный идентификатор для OrderItem
+                             order_id BIGINT NOT NULL,         -- Ссылка на заказ
+                             product_id BIGINT NOT NULL,       -- Ссылка на продукт
+                             FOREIGN KEY (order_id) REFERENCES shop.orders (id) ON DELETE CASCADE, -- Внешний ключ на таблицу заказов
+                             FOREIGN KEY (product_id) REFERENCES shop.products (id) ON DELETE CASCADE -- Внешний ключ на таблицу продуктов
+);
+
+CREATE TABLE shop.images (
+                        id BIGSERIAL PRIMARY KEY,                   -- Уникальный идентификатор изображения
+                        name VARCHAR(255) NOT NULL,                -- Название изображения
+                        file_name VARCHAR(255) NOT NULL,           -- Имя файла
+                        size BIGINT NOT NULL,                      -- Размер файла в байтах
+                        file_type VARCHAR(255) NOT NULL,           -- MIME-тип файла (например, image/png)
+                        bytes BYTEA NOT NULL,                      -- Бинарное содержимое файла
+                        product_id BIGINT,                         -- Внешний ключ для связи с таблицей продуктов
+                        CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES shop.products (id) ON DELETE CASCADE
+);
+CREATE TABLE shop.ProductDetails (
+                                     id SERIAL PRIMARY KEY,               -- Уникальный идентификатор записи
+                                     product_name VARCHAR(255) NOT NULL,   -- Название товара
+                                     description TEXT NOT NULL,           -- Описание товара
+                                     brand VARCHAR(100),                  -- Бренд товара
+                                     price INTEGER,                        -- Цена (целочисленное значение)
+                                     warranty_period INT,                 -- Гарантийный срок в месяцах
+                                     product_id INT,                      -- Внешний ключ к продукту
+                                     CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES shop.products(id)  -- Внешний ключ
+);
+

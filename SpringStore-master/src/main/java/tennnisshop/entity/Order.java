@@ -1,23 +1,35 @@
 package tennnisshop.entity;
 
+import org.apache.catalina.Store;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "orders")
+
 public class Order {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+
     private Long id;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    @ManyToOne
-    @JoinColumn(name = "username")
     private User user;
+
+    private LocalDateTime date;
+
+    private String status;
+
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+
 
     public Order() {
     }
@@ -53,5 +65,13 @@ public class Order {
                 ", orderItems=" + orderItems +
                 ", user=" + user.getUsername() +
                 ']';
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

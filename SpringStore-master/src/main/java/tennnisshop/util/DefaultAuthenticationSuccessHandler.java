@@ -55,7 +55,7 @@ public class DefaultAuthenticationSuccessHandler
                 case "ROLE_USER":
                     return "/shop";
                 case "ROLE_ADMIN":
-                    return "/orders";
+                    return "/admin";
 
             }
         }

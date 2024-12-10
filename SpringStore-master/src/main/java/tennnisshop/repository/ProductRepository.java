@@ -87,6 +87,11 @@ public class ProductRepository {
     }
 
 
+    public List<Product> findAll() {
+        String sql = "SELECT * FROM products ORDER BY id";
+        return jdbcTemplate.query(sql, this::mapRowToProduct);
+    }
+
     // Получить все продукты с пагинацией
     public Page<Product> getAllProducts(Pageable pageable) {
 
@@ -155,6 +160,10 @@ public class ProductRepository {
         return jdbcTemplate.query(query, (rs, rowNum) -> rs.getString("category"));
     }
 
+    public List<Product> findProductsByOrderId(Long orderId) {
+        String sql ="SELECT p.id, p.title, p.price, p.img_url, p.category, p.quantity FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?;";
+        return jdbcTemplate.query(sql, new Object[]{orderId}, this::mapRowToProduct);
+    }
 
     // Маппер для преобразования строки ResultSet в объект Product
     private Product mapRowToProduct(ResultSet rs, int rowNum) throws SQLException {

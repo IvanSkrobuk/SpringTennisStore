@@ -13,8 +13,6 @@ import tennnisshop.entity.Image;
 import tennnisshop.repository.ImageRepository;
 
 import java.io.ByteArrayInputStream;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class ImageAPIController {
@@ -38,39 +36,9 @@ public class ImageAPIController {
                 .contentLength(image.getSize())
                 .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));
     }
-//    public ResponseEntity<MultiValueMap<String, Object>> getImagesByProductId(@PathVariable Long id) {
-//        // Получаем все изображения для продукта
-//        List<Image> images = imageRepository.getImageByProductId(id);
-//
-//        if (images.isEmpty()) {
-//            throw new IllegalArgumentException("Images not found");
-//        }
-//
-//        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-//
-//        // Добавляем каждое изображение в список
-//        for (Image image : images) {
-//            InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(image.getBytes()));
-//
-//            // Создаем заголовки для изображения
-//            body.add("images", resource);
-//
-//            // Вставляем метаданные (например, название файла) в заголовки
-//            // (вместо header можно использовать атрибуты изображения в теле ответа)
-//            body.add("Content-Disposition", "inline; filename=\"" + image.getFileName() + "\"");
-//            body.add("Content-Type", image.getFileType());
-//        }
-//
-//        // Возвращаем изображения с соответствующим типом контента
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.MULTIPART_FORM_DATA)
-//                .body(body);
-//    }
-
 
     @GetMapping("/image/{id}")
     public ResponseEntity<?> getImageByProductId(@PathVariable Long id) {
-        // Получаем первое изображение для продукта
         Image image = imageRepository.getFirstImageByProductId(id);
 
         if (image == null) {

@@ -1,13 +1,10 @@
 package tennnisshop.controller;
 
+import org.springframework.web.bind.annotation.*;
 import tennnisshop.util.ShoppingCart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -25,7 +22,15 @@ public class CartController {
     @GetMapping("")
     public String showCart(Model model) {
         model.addAttribute("orderItems", cart.getOrderItems());
+        model.addAttribute("totalPrice", cart.getTotalPrice());
+
         return "cart";
+    }
+
+    @PostMapping("/remove/{id}")
+    public String removeProductFromCart(@PathVariable Long id) {
+        cart.removeProductById(id);
+        return "redirect:/cart";
     }
 
     @GetMapping("/add/{id}")

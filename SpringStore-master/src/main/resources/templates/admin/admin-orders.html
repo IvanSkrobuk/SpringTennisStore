@@ -99,14 +99,16 @@
                     <tr>
                         <th>Дата</th>
                         <th>Пользователь</th>
+                        <th></th>
                         <th>Действие</th>
-                        <th>Статус</th> <!-- Новый столбец для изменения статуса -->
+                        <th>Статус</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="order : ${orders}">
                         <td th:text="${#temporals.format(order.date, 'dd.MM.yyyy HH:mm')}"></td>
                         <td th:text="${order.user.username}"></td>
+                        <td><a class="btn btn-secondary" th:href="@{'/orders/order-details/' + ${order.id}}">Детали</a></td>
                         <td><a class="btn btn-danger" th:href="@{'/admin/remove-order/' + ${order.id}}">Отменить</a></td>
                         <td>
                             <form th:action="@{'/admin/update-order-status/' + ${order.id}}" method="post">
@@ -116,6 +118,7 @@
                                         <option value="SHIPPED" th:selected="${order.status == 'SHIPPED'}">Отправлен</option>
                                         <option value="DELIVERED" th:selected="${order.status == 'DELIVERED'}">Доставлен</option>
                                         <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">Отменен</option>
+                                        <option value="COMPLETED" th:selected="${order.status == 'COMPLETED'}">Завершен</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-success mt-2">Обновить</button>

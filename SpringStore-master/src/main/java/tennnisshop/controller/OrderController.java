@@ -3,6 +3,7 @@ package tennnisshop.controller;
 import tennnisshop.entity.Order;
 import tennnisshop.entity.User;
 import tennnisshop.service.OrderService;
+import tennnisshop.service.ProductService;
 import tennnisshop.service.UserService;
 import tennnisshop.util.ShoppingCart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class OrderController {
     private UserService userService;
 
     private ShoppingCart cart;
+    private ProductService productService;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -51,6 +53,7 @@ public class OrderController {
     public String toOrderDetails(Model model, @PathVariable("id") Long id) {
         Order selectedOrder = orderService.getOrderById(id);
         model.addAttribute("selectedOrder", selectedOrder);
+        model.addAttribute("orderItems", productService.findProductsByOrderId(selectedOrder.getId()));
         return "order-details";
     }
 
@@ -65,5 +68,10 @@ public class OrderController {
     public String deleteOrderById(@PathVariable("id") Long id) {
         orderService.updateOrderStatus(id,"CANCELLED");
         return "redirect:/orders";
+    }
+
+    @Autowired
+    public void setProductService(ProductService productService) {
+        this.productService = productService;
     }
 }

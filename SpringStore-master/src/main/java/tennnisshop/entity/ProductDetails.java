@@ -1,8 +1,6 @@
 package tennnisshop.entity;
 
 
-import java.math.BigDecimal;
-
 public class ProductDetails {
     private Long id;
     private String productName;

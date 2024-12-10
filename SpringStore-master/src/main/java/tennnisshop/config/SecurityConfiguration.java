@@ -20,7 +20,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final DataSource dataSource;
 
-    // Конструктор без PasswordEncoder, его инжектит Spring
     @Autowired
     public SecurityConfiguration(DataSource dataSource) {
         this.dataSource = dataSource;

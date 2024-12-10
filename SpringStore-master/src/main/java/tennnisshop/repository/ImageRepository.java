@@ -70,7 +70,6 @@ public class ImageRepository {
             image.setSize(rs.getLong("size"));
             image.setFileType(rs.getString("file_type"));
             image.setBytes(rs.getBytes("bytes"));
-            // Связываем изображение с продуктом через ID (если нужно, можно использовать отдельный запрос для загрузки продукта)
             return image;
         }
     }

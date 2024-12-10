@@ -1,7 +1,5 @@
 package tennnisshop.entity;
 
-import javax.persistence.*;
-
 
 public class Product {
 
@@ -84,4 +82,5 @@ public class Product {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
 }

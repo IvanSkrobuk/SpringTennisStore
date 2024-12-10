@@ -100,9 +100,22 @@
       </div>
       <div class="chart-container">
         <h2>Статистика</h2>
-        <form method="get" action="/api/exportAnalytics">
-          <button type="submit" class="btn btn-outline-success">Выгрузить Excel</button>
+        <form th:action="@{/admin/export}" method="get" class="mt-4">
+          <div class="mb-3 d-flex align-items-center">
+            <label for="exportTypes" class="form-label me-2">Выберите типы данных для экспорта:</label>
+            <select id="exportTypes" name="exportTypes" class="form-select me-3">
+              <option value="users-export">Пользователи</option>
+              <option value="products-export">Товары</option>
+              <option value="orders-export">Заказы</option>
+              <option value="analytics-export">Аналитика</option>
+              <option value="users-export,products-export,orders-export,analytics-export">Все данные</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Экспортировать в Excel</button>
+          </div>
         </form>
+
+
+
         <table  class="table table-hover">
           <thead class="thead-light">
           <tr>
@@ -145,8 +158,8 @@
         const data = await response.json();
 
         // Преобразование данных для графика
-        const labels = Object.keys(data); // Дни недели
-        const values = Object.values(data); // Количество продаж
+        const labels = Object.keys(data); // Последние 7 дней
+        const values = Object.values(data); // Суммы продаж
 
         // Создание графика
         new Chart(ctx, {
@@ -154,21 +167,36 @@
           data: {
             labels: labels,
             datasets: [{
+              label: 'Продажи за последние 7 дней',
               data: values,
-              lineTension: 0,
-              backgroundColor: 'transparent',
+              lineTension: 0.3,
+              backgroundColor: 'rgba(0, 123, 255, 0.2)',
               borderColor: '#007bff',
-              borderWidth: 4,
+              borderWidth: 3,
               pointBackgroundColor: '#007bff'
             }]
           },
           options: {
             plugins: {
               legend: {
-                display: false
+                display: true
               },
               tooltip: {
                 boxPadding: 3
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Дни'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Сумма продаж'
+                }
               }
             }
           }
@@ -179,5 +207,6 @@
     });
   })();
 </script>
+
 </body>
 </html>

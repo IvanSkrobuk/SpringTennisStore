@@ -1,7 +1,6 @@
 package tennnisshop.service;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.web.multipart.MultipartFile;
 import tennnisshop.entity.Image;
 import tennnisshop.entity.Product;
@@ -39,6 +38,10 @@ public class ProductService {
     @Autowired
     public void setProductDetailsRepository(ProductDetailsRepository productDetailsRepository) {
         this.productDetailsRepository = productDetailsRepository;
+    }
+
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 
     public Page<Product> getAllProducts(Pageable pageable) {
@@ -80,8 +83,7 @@ public class ProductService {
             images.add(image3);
         }
 
-        // Сохраняем продукт в базу данных
-        // Сохраняем продукт и получаем его ID
+
         Product productFromDb = productRepository.save(product);
 
         productDetails.setProductId(productFromDb.getId());
@@ -89,8 +91,8 @@ public class ProductService {
 
         // Сохраняем изображения и связываем их с продуктом
         for (Image image : images) {
-            image.setProductId(productFromDb.getId()); // Связываем изображение с продуктом
-            imageRepository.save(image); // Сохраняем изображение в базе данных
+            image.setProductId(productFromDb.getId());
+            imageRepository.save(image);
         }
 
 
@@ -124,6 +126,10 @@ public class ProductService {
         productDetailsService.update(details);
     }
 
+    public void update(Product product) {
+        productRepository.update(product);
+    }
+
     public void updatePrice(Long id, int price) {
         Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
         product.setPrice(price);
@@ -141,6 +147,7 @@ public class ProductService {
         productRepository.update(product);
 
     }
+
     private Image toImageEntity(MultipartFile file) throws IOException {
         Image image = new Image();
         image.setName(file.getOriginalFilename());
@@ -155,5 +162,9 @@ public class ProductService {
     @Autowired
     public void setProductDetailsService(ProductDetailsService productDetailsService) {
         this.productDetailsService = productDetailsService;
+    }
+
+    public List<Product> findProductsByOrderId(Long orderId) {
+        return productRepository.findProductsByOrderId(orderId);
     }
 }

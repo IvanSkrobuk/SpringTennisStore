@@ -17,13 +17,16 @@
             height: 225px;
         }
 
+
         .hero-section {
-            background-image: url('/images/images.jpg'); /* Укажите путь к вашему изображению */
             background-size: cover; /* Изображение будет покрывать всю секцию */
             background-position: center; /* Центрируем изображение */
             background-repeat: no-repeat; /* Отключаем повторение */
             color: white; /* Устанавливаем белый цвет текста для контраста */
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* Тень для текста */
+        }
+        .card{
+            background-color: #c7ffc2;
         }
 
     </style>
@@ -68,6 +71,7 @@
                 </div>
             </div>
             <!-- Пагинация -->
+            <br>
             <div th:if="${products.getTotalPages() > 1}" class="pagination justify-content-center">
                 <a th:href="@{'/shop?page=0&searchQuery=' + ${searchQuery}}" class="page-link" th:text="'1'">1</a>
                 <a th:href="@{'/shop?page=' + ${products.number + 1} + '&searchQuery=' + ${searchQuery}}" class="page-link" th:text="'Следующая страница'">Следующая страница</a>

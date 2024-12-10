@@ -3,6 +3,7 @@ package tennnisshop.repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import tennnisshop.entity.Order;
+import tennnisshop.entity.Product;
 import tennnisshop.entity.User;
 
 import java.sql.ResultSet;
@@ -91,4 +92,5 @@ public class OrderRepository {
         String sql = "UPDATE shop.orders SET status = ? WHERE id = ?";
         jdbcTemplate.update(sql, status, orderId);
     }
+
 }

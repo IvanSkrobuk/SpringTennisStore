@@ -122,34 +122,38 @@ public class OrderService {
 
     /////////////////////
     public Map<String, Integer> calculateSalesAmountPerDay() {
-        List<String> daysOfWeekOrder = List.of(
-                "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"
-        );
+        Map<String, Integer> salesPerDay = new LinkedHashMap<>();
 
-        Map<String, Integer> salesPerDay = new HashMap<>();
+        // Получаем текущую дату и дату 7 дней назад
+        LocalDate today = LocalDate.now();
+        LocalDate weekAgo = today.minusDays(6);
 
-        List<Order> orders = orderRepository.findAll();
+        // Получаем все заказы за последние 7 дней
+        List<Order> orders = orderRepository.findAll().stream()
+                .filter(order -> !order.getDate().toLocalDate().isBefore(weekAgo))
+                .collect(Collectors.toList());
 
+        // Инициализируем карту для последних 7 дней
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date = today.minusDays(i);
+            salesPerDay.put(date.format(DateTimeFormatter.ISO_DATE), 0);
+        }
+
+        // Рассчитываем сумму продаж для каждого дня
         for (Order order : orders) {
-            String dayOfWeek = order.getDate().getDayOfWeek().toString();
+            String orderDate = order.getDate().toLocalDate().format(DateTimeFormatter.ISO_DATE);
 
             int totalOrderAmount = 0;
-
             List<OrderItem> orderItems = orderItemService.findByOrderId(order.getId());
             for (OrderItem item : orderItems) {
                 totalOrderAmount += productService.getProductById(item.getProduct().getId()).getPrice();
             }
 
-            salesPerDay.put(dayOfWeek, salesPerDay.getOrDefault(dayOfWeek, 0) + totalOrderAmount);
+            salesPerDay.put(orderDate, salesPerDay.getOrDefault(orderDate, 0) + totalOrderAmount);
         }
 
-        Map<String, Integer> sortedSalesPerDay = new LinkedHashMap<>();
-        for (String day : daysOfWeekOrder) {
-            sortedSalesPerDay.put(day, salesPerDay.getOrDefault(day, 0));
-        }
-
-        System.out.println(sortedSalesPerDay);
-        return sortedSalesPerDay;
+        System.out.println(salesPerDay);
+        return salesPerDay;
     }
 
     public void updateOrderStatus(Long orderId, String status) {

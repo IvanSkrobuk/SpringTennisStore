@@ -1,7 +1,5 @@
 package tennnisshop.entity;
 
-import javax.persistence.*;
-
 
 public class OrderItem {
 

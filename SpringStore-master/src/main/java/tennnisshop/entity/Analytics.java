@@ -1,7 +1,6 @@
 package tennnisshop.entity;
 
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class Analytics {
@@ -11,7 +10,6 @@ public class Analytics {
     private Double totalRevenue;
     private LocalDateTime lastSold;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

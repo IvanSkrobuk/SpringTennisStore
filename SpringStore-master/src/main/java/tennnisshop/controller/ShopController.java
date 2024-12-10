@@ -38,12 +38,6 @@ public class ShopController {
         this.productDetailsService = productDetailsService;
     }
 
-//    @GetMapping("/shop")
-//    public String toShop(Model model, Pageable pageable) {
-//        model.addAttribute("products", productService.getAllProducts(pageable));
-//        return "shop";
-//    }
-
     @GetMapping("/shop")
     public String getProducts(
             @RequestParam(value = "searchQuery", required = false, defaultValue = "") String searchQuery,

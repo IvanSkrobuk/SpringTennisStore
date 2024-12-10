@@ -8,13 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tennnisshop.entity.Analytics;
 import tennnisshop.service.AnalyticsService;
 import tennnisshop.service.OrderService;
 
-import java.io.ByteArrayOutputStream;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,11 +18,9 @@ import java.util.Map;
 public class SalesAPIController {
 
     private final OrderService orderService;
-    private final AnalyticsService analyticsService;
 
-    public SalesAPIController(OrderService orderService, AnalyticsService analyticsService) {
+    public SalesAPIController(OrderService orderService) {
         this.orderService = orderService;
-        this.analyticsService = analyticsService;
     }
 
 

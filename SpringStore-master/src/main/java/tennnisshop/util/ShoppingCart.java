@@ -8,8 +8,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
+import java.math.BigDecimal;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,4 +43,18 @@ public class ShoppingCart {
         orderItem.setProduct(product);
         orderItems.add(orderItem);
     }
+
+
+    public int getTotalPrice() {
+        return orderItems.stream()
+                .mapToInt(orderItem -> {
+                    Product product = productService.getProductById(orderItem.getProduct().getId());
+                    return (product != null) ? product.getPrice() : 0;
+                })
+                .sum();
+    }
+    public void removeProductById(Long id) {
+        orderItems.removeIf(orderItem -> orderItem.getProduct().getId().equals(id));
+    }
+
 }

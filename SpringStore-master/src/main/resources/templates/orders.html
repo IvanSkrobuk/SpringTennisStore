@@ -34,12 +34,14 @@
             <td th:text="${#temporals.format(order.date, 'dd.MM.yyyy HH:mm')}"></td>
             <td><a class="btn btn-secondary" th:href="@{'/orders/order-details/' + ${order.id}}">Детали</a></td>
             <td>
-                <a class="btn btn-danger" th:if="${order.status != 'CANCELLED'}" th:href="@{'/orders/remove/' + ${order.id}}">Отменить</a>
+                <a class="btn btn-danger" th:if="${order.status != 'CANCELLED' && order.status != 'COMPLETED'}" th:href="@{'/orders/remove/' + ${order.id}}">Отменить</a>
                 <span th:if="${order.status == 'CANCELLED'}">Отменен</span>
+                <span th:if="${order.status == 'COMPLETED'}">Завершен</span>
             </td>
         </tr>
         </tbody>
     </table>
+
 </div>
 <div sec:authorize="isAnonymous()" th:if="${orderItems.size() > 0}">
     <p>Чтобы заказать нужно <a class="btn btn-success" th:href="@{/login}"> авторизоваться </a></p>

@@ -93,13 +93,14 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="chart-container">
                 <h2>Товары</h2>
-                <span th:if="${products.size == 0}">Нет продуктов</span>
-                <table th:if="${products.size > 0}" class="table table-hover">
+                <span th:if="${products.size() == 0}">Нет продуктов</span>
+                <table th:if="${products.size() > 0}" class="table table-hover">
                     <thead class="thead-light">
                     <tr>
                         <th>ID</th>
                         <th>Название</th>
                         <th>Цена, руб.</th>
+                        <th>Количество</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -107,26 +108,18 @@
                     <tbody>
                     <tr th:each="product : ${products}">
                         <td th:text="${product.id}"></td>
-                        <td>
-                            <form th:action="@{'/admin/update-title/' + ${product.id}}" method="post" class="d-flex">
-                                <input type="text" name="title" th:value="${product.title}" class="form-control me-2" required>
-                                <button type="submit" class="btn btn-success">Сохранить</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form th:action="@{'/admin/update-price/' + ${product.id}}" method="post" class="d-flex">
-                                <input type="number" name="price" th:value="${product.price}" class="form-control me-2" required>
-                                <button type="submit" class="btn btn-success">Сохранить</button>
-                            </form>
-                        </td>
+                        <td th:text="${product.title}"></td>
+                        <td th:text="${product.price}"></td>
                         <td>
                             <form th:action="@{'/admin/update-quantity/' + ${product.id}}" method="post" class="d-flex">
-                                <input type="number" name="quantity" th:value="${product.quantity}" class="form-control me-2" required>
+                                <input type="number" name="quantity" th:value="${product.quantity}" class="form-control me-2" required min="0" >
                                 <button type="submit" class="btn btn-success">Сохранить</button>
                             </form>
                         </td>
                         <td>
-                            <!-- Кнопка для удаления -->
+                            <a th:href="@{'/admin/edit-product/'+${product.id}}" class="btn btn-primary">Редактировать</a>
+                        </td>
+                        <td>
                             <a class="btn btn-danger" th:href="@{'/admin/remove/' + ${product.id}}">Удалить</a>
                         </td>
                     </tr>
@@ -134,7 +127,6 @@
                 </table>
             </div>
         </main>
-
     </div>
 </div>
 

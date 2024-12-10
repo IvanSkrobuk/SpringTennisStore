@@ -10,11 +10,9 @@ public class AnalyticsDTO {
     private int totalSales;
     private double totalRevenue;
 
-    // Открытый конструктор без аргументов
     public AnalyticsDTO() {
     }
 
-    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }

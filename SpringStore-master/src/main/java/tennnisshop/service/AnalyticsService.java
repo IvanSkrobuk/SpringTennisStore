@@ -22,6 +22,10 @@ public class AnalyticsService {
         return analyticsRepository.findByProductId(productId);
     }
 
+    public List<Analytics> getAllAnalytics() {
+        return analyticsRepository.findAll();
+    }
+
     public void updateAnalyticsAfterSale(Long productId, Integer quantitySold, Double revenue) {
         Optional<Analytics> existingAnalytics = analyticsRepository.findByProductId(productId);
 
@@ -32,7 +36,4 @@ public class AnalyticsService {
         analyticsRepository.updateAnalytics(productId, quantitySold, revenue);
     }
 
-    public List<Analytics> getAllAnalytics() {
-        return analyticsRepository.findAll();
-    }
 }

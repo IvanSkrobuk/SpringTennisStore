@@ -109,7 +109,7 @@
                         <td th:text="${#temporals.format(order.date, 'dd.MM.yyyy HH:mm')}"></td>
                         <td th:text="${order.user.username}"></td>
                         <td><a class="btn btn-secondary" th:href="@{'/orders/order-details/' + ${order.id}}">Детали</a></td>
-                        <td><a class="btn btn-danger" th:href="@{'/admin/remove-order/' + ${order.id}}">Отменить</a></td>
+                        <td><a class="btn btn-danger" th:href="@{'/admin/remove-order/' + ${order.id}}">Удалить</a></td>
                         <td>
                             <form th:action="@{'/admin/update-order-status/' + ${order.id}}" method="post">
                                 <div class="form-group">

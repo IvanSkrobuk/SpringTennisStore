@@ -8,11 +8,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
-import java.math.BigDecimal;
-
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -54,7 +52,19 @@ public class ShoppingCart {
                 .sum();
     }
     public void removeProductById(Long id) {
-        orderItems.removeIf(orderItem -> orderItem.getProduct().getId().equals(id));
+        Iterator<OrderItem> iterator = orderItems.iterator();
+        while (iterator.hasNext()) {
+            OrderItem orderItem = iterator.next();
+            if (orderItem.getProduct().getId().equals(id)) {
+                iterator.remove();
+                break;
+            }
+        }
     }
+    public void clearOrderItems() {
+        orderItems.clear();
+    }
+
+
 
 }

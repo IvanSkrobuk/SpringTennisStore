@@ -55,6 +55,10 @@
 <header >
     <div th:replace="~{navigation :: navigation(Shop)}"></div>
 </header>
+<div th:if="${error}" class="alert alert-danger">
+    <p th:text="${error}"></p>
+</div>
+
 <div class="container-fluid">
     <div class="row" sec:authorize="hasRole('ADMIN')">
         <!-- Sidebar -->
@@ -101,12 +105,12 @@
                 <form th:action="@{/admin/create}" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="title" class="form-label">Название товара:</label>
-                        <input type="text" id="title" name="title" class="form-control" required />
+                        <input type="text" id="title" name="title" class="form-control" maxlength="255" required />
                     </div>
 
                     <div class="mb-3">
                         <label for="price" class="form-label">Цена:</label>
-                        <input type="number" id="price" name="price" class="form-control" required min="0" />
+                        <input type="number" id="price" name="price" class="form-control" required min="0" step="1" max="10000"/>
                     </div>
 
                     <div class="mb-3">
@@ -116,17 +120,17 @@
 
                     <div class="mb-3">
                         <label for="brand" class="form-label">Бренд:</label>
-                        <input type="text" id="brand" name="brand" class="form-control" required />
+                        <input type="text" id="brand" name="brand" class="form-control" maxlength="100"  required />
                     </div>
 
                     <div class="mb-3">
                         <label for="brand" class="form-label">Категория:</label>
-                        <input type="text" id="category" name="category" class="form-control" required />
+                        <input type="text" id="category" name="category" class="form-control" maxlength="100" required />
                     </div>
 
                     <div class="mb-3">
                         <label for="warrantyPeriod" class="form-label">Срок гарантии (мес.):</label>
-                        <input type="number" id="warrantyPeriod" name="warrantyPeriod" class="form-control" required min="0" />
+                        <input type="number" id="warrantyPeriod" name="warrantyPeriod" class="form-control" required min="0" step="1" max="10000" />
                     </div>
 
                     <div class="mb-3">

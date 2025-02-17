@@ -5,24 +5,23 @@
 
 <head>
     <meta charset="utf-8"/>
-    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spring Store Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Дополнительные стили для панели */
         body {
             font-size: 0.875rem;
         }
 
         .sidebar {
             position: fixed;
-            top: 56px; /* Высота стандартной панели навигации Bootstrap */
+            top: 56px;
             bottom: 0;
             left: 0;
             z-index: 100;
-            padding: 16px 0 0; /* Дополнительные отступы */
+            padding: 16px 0 0;
             box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
         }
 
@@ -30,7 +29,7 @@
             position: -webkit-sticky;
             position: sticky;
             top: 0;
-            height: calc(100vh - 56px); /* Учитываем высоту верхней панели */
+            height: calc(100vh - 56px);
             padding-top: .5rem;
             overflow-x: hidden;
             overflow-y: auto;
@@ -47,7 +46,7 @@
 </head>
 
 <body>
-<header >
+<header>
     <div th:replace="~{navigation :: navigation(Shop)}"></div>
 </header>
 <div class="container-fluid">
@@ -111,8 +110,8 @@
                         <td th:text="${product.title}"></td>
                         <td th:text="${product.price}"></td>
                         <td>
-                            <form th:action="@{'/admin/update-quantity/' + ${product.id}}" method="post" class="d-flex">
-                                <input type="number" name="quantity" th:value="${product.quantity}" class="form-control me-2" required min="0" >
+                            <form th:action="@{'/admin/update-quantity/' + ${product.id}}" method="post" class="d-flex" onsubmit="updateQuantity(event, this)">
+                                <input type="number" name="quantity" th:value="${product.quantity}" class="form-control me-2" required min="0">
                                 <button type="submit" class="btn btn-success">Сохранить</button>
                             </form>
                         </td>
@@ -130,6 +129,25 @@
     </div>
 </div>
 
+<script>
+    function updateQuantity(event, form) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const actionUrl = form.action;
 
+        fetch(actionUrl, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка при обновлении количества');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+</script>
 </body>
 </html>

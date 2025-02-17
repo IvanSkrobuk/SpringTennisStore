@@ -19,38 +19,7 @@ public class ProductDetailsRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void save(ProductDetails productDetails) {
-        String sql = "INSERT INTO ProductDetails (product_name, description, brand, price, warranty_period, product_id) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, productDetails.getProductName(), productDetails.getDescription(),
-                productDetails.getBrand(), productDetails.getPrice(), productDetails.getWarrantyPeriod(), productDetails.getProductId());
-    }
-
-    public List<ProductDetails> findAll() {
-        String sql = "SELECT * FROM ProductDetails";
-        return jdbcTemplate.query(sql, new ProductDetailsRowMapper());
-    }
-
-    public ProductDetails findById(Long id) {
-        String sql = "SELECT * FROM ProductDetails WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new ProductDetailsRowMapper(), id);
-    }
-
-    public ProductDetails findByProductId(Long productid) {
-        String sql = "SELECT * FROM ProductDetails WHERE product_id = ?";
-        return jdbcTemplate.queryForObject(sql, new ProductDetailsRowMapper(), productid);
-    }
-
-    public void update(ProductDetails productDetails) {
-        String sql = "UPDATE ProductDetails SET product_name = ?, description = ?, brand = ?, price = ?, warranty_period = ? WHERE id = ?";
-        jdbcTemplate.update(sql, productDetails.getProductName(), productDetails.getDescription(),
-                productDetails.getBrand(), productDetails.getPrice(), productDetails.getWarrantyPeriod(), productDetails.getId());
-    }
-
-    public void deleteById(Long id) {
-        String sql = "DELETE FROM ProductDetails WHERE id = ?";
-        jdbcTemplate.update(sql, id);
-    }
-
+    // Метод для маппинга строки из базы данных в объект ProductDetails
     private static class ProductDetailsRowMapper implements RowMapper<ProductDetails> {
         @Override
         public ProductDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -65,4 +34,43 @@ public class ProductDetailsRepository {
             return productDetails;
         }
     }
+
+    // Сохранение ProductDetails
+    public void save(ProductDetails productDetails) {
+        String sql = "INSERT INTO ProductDetails (product_name, description, brand, price, warranty_period, product_id) VALUES (?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, productDetails.getProductName(), productDetails.getDescription(),
+                productDetails.getBrand(), productDetails.getPrice(), productDetails.getWarrantyPeriod(), productDetails.getProductId());
+    }
+
+    // Получение всех значенинй
+    public List<ProductDetails> findAll() {
+        String sql = "SELECT * FROM ProductDetails";
+        return jdbcTemplate.query(sql, new ProductDetailsRowMapper());
+    }
+
+    // Получение значения по ID
+    public ProductDetails findById(Long id) {
+        String sql = "SELECT * FROM ProductDetails WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new ProductDetailsRowMapper(), id);
+    }
+
+    // Получение деталей закза по ID заказа
+    public ProductDetails findByProductId(Long productid) {
+        String sql = "SELECT * FROM ProductDetails WHERE product_id = ?";
+        return jdbcTemplate.queryForObject(sql, new ProductDetailsRowMapper(), productid);
+    }
+
+    // Обновление деталий товара
+    public void update(ProductDetails productDetails) {
+        String sql = "UPDATE ProductDetails SET product_name = ?, description = ?, brand = ?, price = ?, warranty_period = ? WHERE id = ?";
+        jdbcTemplate.update(sql, productDetails.getProductName(), productDetails.getDescription(),
+                productDetails.getBrand(), productDetails.getPrice(), productDetails.getWarrantyPeriod(), productDetails.getId());
+    }
+
+    // Удалить товар по id
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM ProductDetails WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
 }

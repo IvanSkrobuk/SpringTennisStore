@@ -1,5 +1,6 @@
 package tennnisshop.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import tennnisshop.entity.Authority;
 import tennnisshop.entity.Order;
 import tennnisshop.entity.OrderItem;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -51,6 +51,8 @@ public class OrderService {
         this.orderItemService = orderItemService;
     }
 
+
+    @Transactional
     public Order createOrderFromItems(User user, List<OrderItem> orderItems) {
         // Создание нового заказа
         Order order = new Order();
@@ -60,20 +62,30 @@ public class OrderService {
         order.setStatus("PENDING");
 
         Order savedOrder = orderRepository.save(order);
-
         double orderPrice = 0.0;
         Map<Long, Integer> productQuantities = new HashMap<>();
         Map<Long, Double> productRevenues = new HashMap<>();
+        int rlbck =0;
 
-        // Логика добавления позиций в заказ
+
         for (OrderItem orderItem : orderItems) {
             orderItem.setOrder(savedOrder);
             orderItemService.addOrderItem(orderItem);
-            productService.updateQuantity(orderItem.getProduct().getId(),orderItem.getProduct().getQuantity()-1);
+
+            System.out.println("Добавлен товар в заказ: ID=" + orderItem.getProduct().getId());
             Long productId = orderItem.getProduct().getId();
-            Double price = (double) orderItem.getProduct().getPrice();
-            productQuantities.put(productId, productQuantities.getOrDefault(productId, 0) + 1);
-            productRevenues.put(productId, productRevenues.getOrDefault(productId, 0.0) + price);
+            int requestedQuantity = 1;
+            int currentQuantity = productService.getQuantity(orderItem.getProduct());
+            if (currentQuantity >= requestedQuantity) {
+                productService.updateQuantity(productId, currentQuantity - requestedQuantity);
+                int price = orderItem.getProduct().getPrice();
+                rlbck +=1 ;
+                productQuantities.put(productId, productQuantities.getOrDefault(productId, 0) + requestedQuantity);
+                productRevenues.put(productId, productRevenues.getOrDefault(productId, 0.0) + price * requestedQuantity);
+            } else {
+                System.out.println("Недостаточно товара: ID=" + productId + ", доступно: " + (currentQuantity+rlbck));
+                throw new IllegalStateException("Товара '" +productService.getProductById(productId).getTitle()+ " недостаточно на складе, в наличии: " + (currentQuantity+rlbck)+".");
+            }
         }
 
         // Обновление аналитики для каждого продукта
@@ -120,7 +132,6 @@ public class OrderService {
         return orders;
     }
 
-    /////////////////////
     public Map<String, Integer> calculateSalesAmountPerDay() {
         Map<String, Integer> salesPerDay = new LinkedHashMap<>();
 

@@ -25,46 +25,7 @@ public class UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Найти пользователя по имени пользователя
-    public Optional<User> findById(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
-        try {
-            User user = jdbcTemplate.queryForObject(sql, new Object[]{username}, this::mapRowToUser);
-            return Optional.ofNullable(user);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
-    }
-
-
-    // Сохранить пользователя
-    public void save(User user) {
-
-            String sql = "INSERT INTO users (username, password, enabled) VALUES (?, ?, ?)";
-            jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.isEnabled());
-
-            for (Authority authority : user.getAuthorities()) {
-                String authoritySql = "INSERT INTO authorities (username, authority) VALUES (?, ?)";
-                jdbcTemplate.update(authoritySql, user.getUsername(), authority.getAuthority());
-            }
-
-    }
-
-
-    // Удалить пользователя по имени пользователя
-    public void deleteById(String username) {
-        String sql = "DELETE FROM users WHERE username = ?";
-        jdbcTemplate.update(sql, username);
-
-    }
-
-    // Получить всех пользователей
-
-    public List<User> findAll() {
-        String sql = "SELECT * FROM users";
-        return jdbcTemplate.query(sql, this::mapRowToUser);
-    }
-
+    // Маппер для преобразования строки ResultSet в объект User
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();
         user.setUsername(rs.getString("username"));
@@ -84,6 +45,37 @@ public class UserRepository {
         return user;
     }
 
+    // Сохранить пользователя
+    public void save(User user) {
+
+        String sql = "INSERT INTO users (username, password, enabled) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.isEnabled());
+
+        for (Authority authority : user.getAuthorities()) {
+            String authoritySql = "INSERT INTO authorities (username, authority) VALUES (?, ?)";
+            jdbcTemplate.update(authoritySql, user.getUsername(), authority.getAuthority());
+        }
+
+    }
+
+    // Получение всех пользователей
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users";
+        return jdbcTemplate.query(sql, this::mapRowToUser);
+    }
+
+    // Получение пользователя по имени пользователя
+    public Optional<User> findById(String username) {
+        String sql = "SELECT * FROM users WHERE username = ?";
+        try {
+            User user = jdbcTemplate.queryForObject(sql, new Object[]{username}, this::mapRowToUser);
+            return Optional.ofNullable(user);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    // Обновление статуса пользователя
     public void updateStatus(String username, boolean enabled) {
         String sql = "UPDATE users SET enabled = ? WHERE username = ?";
         int rowsUpdated = jdbcTemplate.update(sql, enabled, username);
@@ -91,6 +83,13 @@ public class UserRepository {
         if (rowsUpdated == 0) {
             throw new IllegalArgumentException("User with username '" + username + "' not found.");
         }
+    }
+
+    // Удаление пользователя по имени пользователя
+    public void deleteById(String username) {
+        String sql = "DELETE FROM users WHERE username = ?";
+        jdbcTemplate.update(sql, username);
+
     }
 
 }

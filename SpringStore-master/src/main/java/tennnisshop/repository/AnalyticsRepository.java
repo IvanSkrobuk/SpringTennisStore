@@ -29,6 +29,18 @@ public class AnalyticsRepository {
         return analytics;
     };
 
+    // Создать новую аналитику
+    public void createAnalytics(Long productId) {
+        String sql = "INSERT INTO analytics (product_id, total_sales, total_revenue) VALUES (?, 0, 0.00)";
+        jdbcTemplate.update(sql, productId);
+    }
+
+    // Получить все записи аналитики
+    public List<Analytics> findAll() {
+        String sql = "SELECT * FROM analytics";
+        return jdbcTemplate.query(sql, analyticsRowMapper);
+    }
+
     // Найти аналитику по productId
     public Optional<Analytics> findByProductId(Long productId) {
         String sql = "SELECT * FROM analytics WHERE product_id = ?";
@@ -46,15 +58,4 @@ public class AnalyticsRepository {
         jdbcTemplate.update(sql, salesIncrement, revenueIncrement, productId);
     }
 
-    // Создать новую аналитику
-    public void createAnalytics(Long productId) {
-        String sql = "INSERT INTO analytics (product_id, total_sales, total_revenue) VALUES (?, 0, 0.00)";
-        jdbcTemplate.update(sql, productId);
-    }
-
-    // Получить все записи аналитики
-    public List<Analytics> findAll() {
-        String sql = "SELECT * FROM analytics";
-        return jdbcTemplate.query(sql, analyticsRowMapper);
-    }
 }

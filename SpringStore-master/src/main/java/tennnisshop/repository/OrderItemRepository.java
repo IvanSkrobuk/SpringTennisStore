@@ -25,7 +25,6 @@ public class OrderItemRepository {
         OrderItem orderItem = new OrderItem();
         orderItem.setId(rs.getLong("id"));
 
-        // Связанные объекты (загружаются по ID)
         Order order = new Order();
         order.setId(rs.getLong("order_id"));
         orderItem.setOrder(order);
@@ -55,14 +54,16 @@ public class OrderItemRepository {
         return jdbcTemplate.query(sql, orderItemMapper);
     }
 
+    // Получение всех записей по ID заказа
+    public List<OrderItem> findAllByOrderId(Long orderId) {
+        String sql = "SELECT * FROM order_items WHERE order_id = ?";
+        return jdbcTemplate.query(sql, orderItemMapper, orderId);
+    }
+
     // Удаление OrderItem по ID
     public void deleteById(Long id) {
         String sql = "DELETE FROM order_items WHERE id = ?";
         jdbcTemplate.update(sql, id);
-    }
-    public List<OrderItem> findAllByOrderId(Long orderId) {
-        String sql = "SELECT * FROM order_items WHERE order_id = ?";
-        return jdbcTemplate.query(sql, orderItemMapper, orderId);
     }
 
 }

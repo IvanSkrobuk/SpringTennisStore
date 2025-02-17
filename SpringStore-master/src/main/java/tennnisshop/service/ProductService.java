@@ -56,6 +56,9 @@ public class ProductService {
         return null;
     }
 
+    public Product findProductByTitle(String title) {
+        return productRepository.findProductByTitle(title);
+    }
 
     public void deleteProductById(Long id) {
         productRepository.deleteById(id);
@@ -92,10 +95,11 @@ public class ProductService {
         // Сохраняем изображения и связываем их с продуктом
         for (Image image : images) {
             image.setProductId(productFromDb.getId());
-            imageRepository.save(image);
+            imageRepository.save(image); // Сохраняем изображение в базе данных
         }
-
-
+    }
+    public int getQuantity(Product product) {
+        return productRepository.getQuantity(product);
     }
 
     public Page<Product> getProductsByCategory(String category, Pageable pageable) {

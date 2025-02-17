@@ -21,6 +21,10 @@ public class OrderItemService {
         orderItemRepository.save(orderItem);
     }
 
+    public List<OrderItem> findByOrderId(Long orderId) {
+        return orderItemRepository.findAllByOrderId(orderId);
+    }
+
     public OrderItem getOrderItemById(Long id) {
         return orderItemRepository.findById(id);
     }
@@ -32,8 +36,4 @@ public class OrderItemService {
     public void deleteOrderItem(Long id) {
         orderItemRepository.deleteById(id);
     }
-    public List<OrderItem> findByOrderId(Long orderId) {
-        return orderItemRepository.findAllByOrderId(orderId);
-    }
-
 }

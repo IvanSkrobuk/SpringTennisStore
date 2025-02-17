@@ -1,5 +1,6 @@
 package tennnisshop.controller;
 
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import tennnisshop.entity.Order;
 import tennnisshop.entity.User;
 import tennnisshop.service.OrderService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/orders")
@@ -58,11 +60,18 @@ public class OrderController {
     }
 
     @GetMapping("/create_order")
-    public String createOrder(Principal principal) {
-        User user = userService.findByUsername(principal.getName());
-        Order orderFromItems = orderService.createOrderFromItems(user, cart.getOrderItems());
-        return "redirect:order-details/" + orderFromItems.getId();
+    public String createOrder(Principal principal, Model model) {
+        try {
+            User user = userService.findByUsername(principal.getName());
+            Order orderFromItems = orderService.createOrderFromItems(user, cart.getOrderItems());
+            return "redirect:/orders/";
+        } catch (IllegalStateException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("orderItems", new ArrayList<>());
+            return "cart";
+        }
     }
+
 
     @GetMapping({"/remove/{id}", "/order-details/remove/{id}"})
     public String deleteOrderById(@PathVariable("id") Long id) {
@@ -74,4 +83,6 @@ public class OrderController {
     public void setProductService(ProductService productService) {
         this.productService = productService;
     }
+
+
 }
